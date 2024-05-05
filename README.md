@@ -4,30 +4,33 @@
   <img src="images\logo\GPT-verse.png" alt="Scrapegraph-ai Logo" style="width: 35%;">
 </p>
 
-Miner AI Beta represents a groundbreaking endeavor, specially crafted to compile an assortment of documents and web pages into a searchable database, all achieved offline. Utilizing cutting-edge language models along with sophisticated indexing strategies, Miner AI Beta is uniquely positioned to streamline the retrieval of information, ensuring speed, efficiency, and superior relevance without the need for an online connection.
+The GPT-Verse library, is an innovative Python package designed for developers and enthusiasts working in the realm of natural language processing and generative pre-trained transformer models. With its dependency specified for Python 3.12, GPT-Verse ensures compatibility with the latest features and improvements of the Python programming language, ensuring users can leverage the most current language benefits.
 
 
 ## 💪 Features
 
-- Indexing support for PDFs, PowerPoint presentations, Excel spreadsheets, web pages, and YouTube video transcripts.
-- Utilizes powerful embeddings and vector storage mechanisms to create efficient search indexes.
-- Merge functionality to combine multiple indexes for comprehensive search capabilities.
-- Designed with modularity in mind, allowing for easy extension to support additional document types.
+- Language Generation: The GPT model excels at generating coherent and contextually relevant text based on input prompts. Users can expect GPT-Verse to provide APIs that allow them to generate text for a variety of applications, ranging from automated content creation to chatbots.
+
+- Fine-tuning on Custom Datasets: A critical feature of GPT models is their ability to be fine-tuned on specific datasets. This allows the model to perform well on niche tasks or understand specific domains much better. GPT-Verse is likely to offer facilities to enable this fine-tuning, making it versatile for specialized applications.
+
+- Language Understanding: Beyond generating text, GPT models are capable of understanding and parsing input text to perform tasks like sentiment analysis, summarization, and question answering. GPT-Verse may include functionalities that harness this capability, offering users tools for extracting insights from text or improving interaction with machine learning systems.
+
+- Integration Ready: Given the nature of such libraries, GPT-Verse might be designed with integration in mind, facilitating its use alongside other Python libraries and frameworks in larger applications or systems.
 
 ## 💻 Installation
 
-Miner AI Beta requires Python 3.12 or later. It is recommended to use a virtual environment to manage the project dependencies.
+GPT-Verse requires Python 3.12 or later. It is recommended to use a virtual environment to manage the project dependencies.
 
-To install Miner AI Beta and its dependencies, follow these steps:
+To install GPT-Verse and its dependencies, follow these steps:
 
 ```bash
 # Install the library from pipy
-pip install miner-ai-beta==<last-code-version>
+pip install gpt_verse==<last-code-version>
 ```
 
 ## ⚒️ Usage
 
-1. **Indexing Documents**
+1. **Use Langchain Agents as Tool**
 
    To start indexing your documents, you need to prepare your documents in the supported formats (PDF, PPTX, XLSX, web pages, YouTube videos).
 
@@ -35,56 +38,39 @@ pip install miner-ai-beta==<last-code-version>
 
    ```python
    # Initialize your embeddings model
-   from langchain_openai import OpenAIEmbeddings
+   from langchain_openai import ChatOpenAI
+   from langchain_community.tools.tavily_search import TavilySearchResults
+   from gpt_verse.personas import SecondPersona, FirstPersona
 
-   embeddings = OpenAIEmbeddings() 
+   llm = ChatOpenAI(
+      model="gpt-4-turbo",
+      max_tokens=4096 
+      )
 
-   # Initialize your vector store (FAISS, ChromaDB, etc.)
-   from langchain.vectorstores.faiss import FAISS
+   tavily_tool = TavilySearchResults()
 
-   vectorstore = FAISS 
+   # Define the second agent (it will be the contact-center)
+   agent = FirstPersona(
+      llm=llm,
+      tools=[TavilySearchResults()],
+      prompt="Help me with my task"
+   )
 
-   # Index your documents inside the vectorstore
-   from miner_ai_beta.loader import IndexFromPdfs
-   from miner_ai_beta.loader import IndexFromDocs
-   from miner_ai_beta.loader import IndexFromXlss
+   seconda_persona = SecondPersona(
+      agent=agent.as_executor(),
+      name="Mario",
+      scope="search a job online",
+      instructions="give detailed instruction"  # instruction will be given from the prima persona to the second persona
+   )
 
-   folder_path = 'path/to/your/pdfs'
+   # Define the first agent (it will be the one to pass you to the contact-center agent)
+   prima_persona = FirstPersona(
+      llm=llm,
+      tools=[seconda_persona.as_tool()],
+      prompt="Help me with my task" # main scope of the agent
+   )
 
-   pdf = IndexFromPdfs(folder_path, embeddings, vectorstore)
-   doc = IndexFromDocs(folder_path, embeddings, vectorstore)
-   excel = IndexFromXlss(folder_path, embeddings, vectorstore)
-
-   # Merge your indexes
-   from miner_ai_beta.loader import MergeIndexes
-
-   final_index = MergeIndexes([pdf, doc, excel])
-
-   # Save your index locally for later use
-   final_index.save_local('path/to/your/final/index')
-   ```
-
-
-2. **Searching**
-
-   To search within your index, you will need to implement a search mechanism that leverages the created indexes.
-
-   Please refer to `vectorstore` documentation for details on querying indexed data.
-
-   Example for searching documents:
-
-   ```python
-   # After you have saved your index locally, you can load it later
-   from langchain_openai import OpenAIEmbeddings
-   embeddings = OpenAIEmbeddings() 
-   FAISS.load_local('path/to/your/final/index', embeddings, allow_dangerous_deserialization=True)
-
-   # Initialize your vector store as a retriever to retrieve only the first 10 documents that are most relevant to the query
-   retriever = db.as_retriever(search_kwargs={"k":10})
-
-   # Retrieve based on query string
-   query = "What is the meaning of life?"
-   result = retriever.invoke(query)  # returns a list of documents
+   result = prima_persona.as_executor().invoke({"input": "can u help me find a job in python coding?"})
    ```
 
 ## 🤝 Contributing
@@ -98,4 +84,4 @@ Miner AI Beta is licensed under the MIT License. See the [MIT](LICENSE) file for
 ## Acknowledgements
 
 - We would like to thank all the contributors to the project and the open-source community for their support.
-- Miner AI Beta is meant to be used for ai data mining over documents and research purposes only. We are not responsible for any misuse of the library.
+- GPT-Verse is meant to be used for ai data mining over documents and research purposes only. We are not responsible for any misuse of the library.
