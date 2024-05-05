@@ -1,7 +1,7 @@
-# Miner AI Beta ⛏️ -- Library under construction
+# GPT-Verse 🎩 -- Library under construction
 
 <p align="center">
-  <img src="images\logo\MINER-AI.png" alt="Scrapegraph-ai Logo" style="width: 35%;">
+  <img src="images\logo\GPT-verse.png" alt="Scrapegraph-ai Logo" style="width: 35%;">
 </p>
 
 Miner AI Beta represents a groundbreaking endeavor, specially crafted to compile an assortment of documents and web pages into a searchable database, all achieved offline. Utilizing cutting-edge language models along with sophisticated indexing strategies, Miner AI Beta is uniquely positioned to streamline the retrieval of information, ensuring speed, efficiency, and superior relevance without the need for an online connection.
